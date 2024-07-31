@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <p th:text="${'Id: ' + book.id}"></p>
+    <p th:text="${'Name: ' + book.name}"></p>
+    <p th:text="${'Author: ' + book.author}"></p>
+    <p th:text="${'Published: ' + book.published}"></p>
+    <a th:href="@{/books/{id}/edit(id=${book.id})}">Edit</a>
+    <p th:if="${person != null}" th:text="${'Book is taken by: ' + person.firstName + ' ' + person.middleName + ' ' + person.lastName}"></p>
+    <p th:if="${person == null}">This book is available!</p>
+    <form th:action="@{/books/{id}/return(id=${book.id})}" th:method="Patch">
+        <input  th:if="${person != null}" type="submit" value="Return book">
+    </form>
+    <form th:if="${person == null}" th:action="@{/books/{id}/take(id=${book.id})}" th:method="patch">
+        <label for="take">Take book:</label>
+        <select th:if="${person == null}" name="user_id" id="take">
+            <option  th:each="user : ${users}" th:value="${user.id}" th:text="${user.firstName + ' ' + user.middleName + ' ' + user.lastName}">
+            </option>
+        </select>
+        <input type="submit" value="Take book">
+    </form>
+</body>
+</html>
