@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+        <table>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Author</th>
+                <th>Release</th>
+                <th colspan="2">Operations</th>
+            </tr>
+            <tr th:each="book: ${books}">
+                <td th:text="${book.id}"></td>
+                <td><a th:href="@{/books/{id}(id=${book.getId()})}" th:text="${book.name}"></a></td>
+                <td th:text="${book.author}"></td>
+                <td th:text="${book.published}"></td>
+                <td><a th:href="@{/books/{id}/edit(id=${book.id})}" th:text="Edit"></a></td>
+                <td>
+                    <form th:action="@{/books/{id}(id=${book.id})}" th:method="DELETE">
+                        <input type="submit" value="Delete">
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
