@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form th:action="@{/persons/{id}(id=${person.id})}" th:method="PUT" th:object="${person}">
+    <input type="hidden" id="id" name="id" th:field="*{id}" th:value="*{id}">
+    <label for="firstName">First name: </label>
+    <input type="text" id="firstName" name="firstName" th:field="*{firstName}" th:value="*{firstName}">
+    <br>
+    <small th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></small>
+    <br>
+    <label for="middleName">Middle name: </label>
+    <input type="text" id="middleName" name="middleName" th:field="*{middleName}" th:value="*{middleName}">
+    <br>
+    <small th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></small>
+    <br>
+    <label for="lastName">Last name: </label>
+    <input type="text" id="lastName" th:name="lastName"  th:field="*{lastName}" th:value="*{lastName}">
+    <br>
+    <small th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></small>
+    <br>
+    <label for="birthDate">Birthdate: </label>
+    <input type="date" id="birthDate" name="birthDate"  th:field="*{birthDate}" th:value="*{birthDate}">
+    <br>
+    <small th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}"></small>
+    <br>
+    <input type="submit" value="Update">
+    <br>
+    <input type="reset" value="Clear">
+</form>
+</body>
+</html>
