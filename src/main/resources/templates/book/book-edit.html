@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form th:action="@{/books/{id}(id=${book.id})}" th:method="PUT" th:object="${book}">
+        <input type="hidden" id="id" name="id" th:field="*{id}" th:value="*{id}">
+        <label for="name">Name: </label>
+        <input type="text" id="name" name="name" th:field="*{name}" th:value="*{name}">
+        <br>
+        <small th:if="${#fields.hasErrors('name')}" style="color: red" th:errors="*{name}"></small>
+        <br>
+        <label for="author">Author: </label>
+        <input type="text" id="author" name="author" th:field="*{author}" th:value="*{author}">
+        <br>
+        <small th:if="${#fields.hasErrors('author')}" style="color: red" th:errors="*{author}"></small>
+        <br>
+        <label for="published">Birthdate: </label>
+        <input type="date" id="published" name="published"  th:field="*{published}" th:value="*{published}">
+        <br>
+        <small th:if="${#fields.hasErrors('published')}" style="color: red" th:errors="*{published}"></small>
+        <br>
+        <input type="submit" value="Update">
+        <br>
+        <input type="reset" value="Clear">
+    </form>
+</body>
+</html>
