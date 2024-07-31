@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p th:text="${'Id: ' + person.id}"></p>
+<p th:text="${'Name: ' + person.getFirstName() + ' ' + person.getMiddleName() + ' ' + person.getLastName()}"></p>
+<p th:text="${'Birthdate: ' + person.getBirthDate()}"></p>
+<a th:href="@{/persons/{id}/edit(id=${person.id})}">Edit</a>
+<h2>Taken books</h2>
+<h3 th:if="${books.isEmpty()}" th:text="${person.getFirstName() +  ' did not take any books!'}"></h3>
+<table th:if="${!books.isEmpty()}">
+    <tr>
+        <th>Id</th>
+        <th>Book name</th>
+        <th>Author</th>
+        <th>Year</th>
+    </tr>
+    <tr th:each="book: ${books}">
+        <td th:text="${book.id}"></td>
+        <td><a th:href="@{/books/{id}(id=${book.getId()})}" th:text="${book.name}"></a></td>
+        <td th:text="${book.author}"></td>
+
+        <td th:text="${person.getBirthDate()}"></td>
+    </tr>
+</table>
+</body>
+</html>
