@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
     <div>
+        <form action="/books/search">
+            <label for="search_input">Enter search name</label>
+            <input type="text" id="search_input" name="query">
+            <input type="submit" value="search">
+        </form>
         <table>
             <tr>
                 <th>Id</th>
@@ -14,7 +19,7 @@
                 <th>Release</th>
                 <th colspan="2">Operations</th>
             </tr>
-            <tr th:each="book: ${books.content}">
+            <tr th:each="book: ${books}">
                 <td th:text="${book.id}"></td>
                 <td><a th:href="@{/books/{id}(id=${book.getId()})}" th:text="${book.name}"></a></td>
                 <td th:text="${book.author}"></td>
@@ -27,11 +32,7 @@
                 </td>
             </tr>
         </table>
-        <br>
-        <div th:if="${books.totalPages > 0}" class="pagination">
-            <a th:each="count : ${#numbers.sequence(0, books.totalPages - 1)}" th:href="@{/books(page=${count}, size=${param.size})}"
-            th:class="${count == books.number + 1} ? active" th:text="${count + 1} + '|'"></a>
-        </div>
     </div>
+<br>
 </body>
 </html>

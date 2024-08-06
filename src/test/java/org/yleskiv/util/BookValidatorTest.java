@@ -8,8 +8,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.BindingResult;
 import org.yleskiv.model.Book;
 import org.yleskiv.model.Person;
-import org.yleskiv.repository.BookDAO;
-import org.yleskiv.repository.PersonDAO;
+import org.yleskiv.repository.BookRepository;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,7 +26,7 @@ public class BookValidatorTest {
     @Mock
     private BindingResult bindingResult;
     @Mock
-    private BookDAO bookDAO;
+    private BookRepository bookRepository;
     @Mock
     private Person person;
     @InjectMocks
@@ -46,11 +47,11 @@ public class BookValidatorTest {
         Book book = new Book();
         book.setName("Test Book");
 
-        when(bookDAO.findByName(book.getName())).thenReturn(null);
+        when(bookRepository.findByName(book.getName())).thenReturn(Optional.empty());
 
         bookValidator.validate(book, bindingResult);
 
-        verify(bookDAO).findByName(book.getName());
+        verify(bookRepository).findByName(book.getName());
         verifyNoInteractions(bindingResult);
     }
 
@@ -60,11 +61,11 @@ public class BookValidatorTest {
         book.setName("Test Book");
 
         doNothing().when(bindingResult).rejectValue("name", "400", "Book with this name already exists!");
-        when(bookDAO.findByName(book.getName())).thenReturn(book);
+        when(bookRepository.findByName(book.getName())).thenReturn(Optional.of(book));
 
         bookValidator.validate(book, bindingResult);
 
-        verify(bookDAO).findByName(book.getName());
+        verify(bookRepository).findByName(book.getName());
         verify(bindingResult).rejectValue("name", "400", "Book with this name already exists!");
     }
 }

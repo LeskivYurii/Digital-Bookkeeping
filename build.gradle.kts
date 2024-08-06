@@ -16,6 +16,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter:$springBootVers")
     implementation("org.springframework.boot:spring-boot-starter-web:$springBootVers")
     implementation("org.springframework.boot:spring-boot-starter-jdbc:$springBootVers")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:$springBootVers")
     implementation("org.springframework.boot:spring-boot-starter-validation:$springBootVers")
     implementation("org.thymeleaf:thymeleaf-spring6:3.1.2.RELEASE")
     implementation("org.flywaydb:flyway-core:10.16.0")

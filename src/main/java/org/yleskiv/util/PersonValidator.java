@@ -4,15 +4,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.yleskiv.model.Person;
-import org.yleskiv.repository.PersonDAO;
+import org.yleskiv.repository.PersonRepository;
 
 @Component
 public class PersonValidator implements Validator {
 
-    private final PersonDAO personDAO;
+    private final PersonRepository personRepository;
 
-    public PersonValidator(PersonDAO personDAO) {
-        this.personDAO = personDAO;
+    public PersonValidator(PersonRepository personRepository) {
+        this.personRepository = personRepository;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class PersonValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Person person = (Person) target;
 
-        if(personDAO.findByFullName(person.getFirstName(), person.getMiddleName(), person.getLastName()) != null) {
+        if(personRepository.findByFirstNameAndMiddleNameAndLastName(person.getFirstName(), person.getMiddleName(), person.getLastName()).isPresent()) {
             errors.rejectValue("lastName", "400", "User with that full name already exists!");
         }
     }

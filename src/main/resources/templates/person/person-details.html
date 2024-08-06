@@ -20,10 +20,14 @@
     </tr>
     <tr th:each="book: ${books}">
         <td th:text="${book.id}"></td>
-        <td><a th:href="@{/books/{id}(id=${book.getId()})}" th:text="${book.name}"></a></td>
-        <td th:text="${book.author}"></td>
+        <td><a th:style="${book.takenDate != null && book.takenDate.plusDays(10).compareTo(T(java.time.LocalDate).now()) < 0 ?
+         'color:red' : 'color:black'}"
+               th:href="@{/books/{id}(id=${book.getId()})}" th:text="${book.name}"></a></td>
+        <td th:style="${book.takenDate != null && book.takenDate.plusDays(10).compareTo(T(java.time.LocalDate).now()) < 0 ?
+         'color:red' : 'color:black'}" th:text="${book.author}"></td>
 
-        <td th:text="${person.getBirthDate()}"></td>
+        <td th:style="${book.takenDate != null && book.takenDate.plusDays(10).compareTo(T(java.time.LocalDate).now()) < 0 ?
+         'color:red' : 'color:black'}" th:text="${book.published}"></td>
     </tr>
 </table>
 </body>

@@ -5,11 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.yleskiv.model.Book;
 import org.yleskiv.model.Person;
-import org.yleskiv.repository.PersonDAO;
+import org.yleskiv.repository.PersonRepository;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,7 +25,7 @@ public class PersonValidatorTest {
     @Mock
     private BindingResult bindingResult;
     @Mock
-    private PersonDAO personDAO;
+    private PersonRepository personRepository;
     @Mock
     private Person person;
     @InjectMocks
@@ -47,12 +48,12 @@ public class PersonValidatorTest {
         person.setLastName("Doe");
         person.setMiddleName("Las");
 
-        when(personDAO.findByFullName(person.getFirstName(), person.getMiddleName(), person.getLastName()))
-                .thenReturn(null);
+        when(personRepository.findByFirstNameAndMiddleNameAndLastName(person.getFirstName(), person.getMiddleName(), person.getLastName()))
+                .thenReturn(Optional.empty());
 
         personValidator.validate(person, bindingResult);
 
-        verify(personDAO).findByFullName(person.getFirstName(), person.getMiddleName(), person.getLastName());
+        verify(personRepository).findByFirstNameAndMiddleNameAndLastName(person.getFirstName(), person.getMiddleName(), person.getLastName());
         verifyNoInteractions(bindingResult);
     }
 
@@ -64,12 +65,12 @@ public class PersonValidatorTest {
         person.setMiddleName("Las");
 
         doNothing().when(bindingResult).rejectValue("lastName", "400", "User with that full name already exists!");
-        when(personDAO.findByFullName(person.getFirstName(), person.getMiddleName(), person.getLastName()))
-                .thenReturn(person);
+        when(personRepository.findByFirstNameAndMiddleNameAndLastName(person.getFirstName(), person.getMiddleName(), person.getLastName()))
+                .thenReturn(Optional.of(person));
 
         personValidator.validate(person, bindingResult);
 
-        verify(personDAO).findByFullName(person.getFirstName(), person.getMiddleName(), person.getLastName());
+        verify(personRepository).findByFirstNameAndMiddleNameAndLastName(person.getFirstName(), person.getMiddleName(), person.getLastName());
         verify(bindingResult).rejectValue("lastName", "400", "User with that full name already exists!");
     }
 

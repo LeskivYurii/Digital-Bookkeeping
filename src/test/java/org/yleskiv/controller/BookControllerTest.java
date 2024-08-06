@@ -4,14 +4,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.validation.BindingResult;
 import org.yleskiv.model.Book;
 import org.yleskiv.model.Person;
-import org.yleskiv.repository.BookDAO;
-import org.yleskiv.repository.PersonDAO;
+import org.yleskiv.service.BookService;
+import org.yleskiv.service.PersonService;
 import org.yleskiv.util.BookValidator;
 
 import java.util.List;
@@ -34,29 +36,29 @@ public class BookControllerTest {
     @MockBean
     private Book book;
     @MockBean
-    private PersonDAO personDAO;
+    private PersonService personService;
     @MockBean
-    private BookDAO bookDAO;
+    private BookService bookService;
     @MockBean
     private BookValidator bookValidator;
 
     @Test
     public void testGetaAll() throws Exception {
-        when(bookDAO.readAll()).thenReturn(List.of(book));
+        when(bookService.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(book)));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/books"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("/book/book-list"))
-                .andExpect(MockMvcResultMatchers.model().attribute("books", List.of(book)));
+                .andExpect(MockMvcResultMatchers.model().attribute("books", new PageImpl<>(List.of(book))));
 
-        verify(bookDAO).readAll();
+        verify(bookService).findAll(any(Pageable.class));
     }
 
     @Test
     public void shouldGetBookById() throws Exception {
-        when(bookDAO.read(ID)).thenReturn(book);
-        when(personDAO.readAll()).thenReturn(List.of(person));
-        when(book.getUserId()).thenReturn(null);
+        when(bookService.findById(ID)).thenReturn(book);
+        when(personService.findAll(any(Pageable.class))).thenReturn(List.of(person));
+        when(book.getPerson()).thenReturn(null);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/books/" + ID))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -64,9 +66,9 @@ public class BookControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attribute("book", book))
                 .andExpect(MockMvcResultMatchers.model().attribute("users", List.of(person)));
 
-        verify(bookDAO).read(ID);
-        verify(personDAO).readAll();
-        verify(book).getUserId();
+        verify(bookService).findById(ID);
+        verify(personService).findAll(any(Pageable.class));
+        verify(book).getPerson();
     }
 
     @Test
@@ -78,7 +80,7 @@ public class BookControllerTest {
 
     @Test
     public void shouldCreateBook() throws Exception {
-        doNothing().when(bookDAO).create(any(Book.class));
+        when(bookService.create(any(Book.class))).thenReturn(book);
         doNothing().when(bookValidator).validate(any(Book.class), any(BindingResult.class));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/books")
@@ -88,7 +90,7 @@ public class BookControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/books"));
 
-        verify(bookDAO).create(any(Book.class));
+        verify(bookService).create(any(Book.class));
         verify(bookValidator).validate(any(Book.class), any(BindingResult.class));
     }
     @Test
@@ -107,18 +109,18 @@ public class BookControllerTest {
 
     @Test
     public void shouldReturnEditPage() throws Exception {
-        when(bookDAO.read(ID)).thenReturn(book);
+        when(bookService.findById(ID)).thenReturn(book);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/books/" + ID + "/edit"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("/book/book-edit"));
 
-        verify(bookDAO).read(ID);
+        verify(bookService).findById(ID);
     }
 
     @Test
     public void shouldUpdateBook() throws Exception {
-        doNothing().when(bookDAO).update(any(Book.class));
+        when(bookService.update(any(Book.class))).thenReturn(book);
         doNothing().when(bookValidator).validate(any(Book.class), any(BindingResult.class));
 
         mockMvc.perform(MockMvcRequestBuilders.put("/books/" + ID)
@@ -128,7 +130,7 @@ public class BookControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/books"));
 
-        verify(bookDAO).update(any(Book.class));
+        verify(bookService).update(any(Book.class));
         verify(bookValidator).validate(any(Book.class), any(BindingResult.class));
     }
 
@@ -148,36 +150,36 @@ public class BookControllerTest {
 
     @Test
     public void shouldDelete() throws Exception {
-        doNothing().when(bookDAO).delete(ID);
+        doNothing().when(bookService).delete(ID);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/books/" + ID))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/books"));
 
-        verify(bookDAO).delete(ID);
+        verify(bookService).delete(ID);
     }
 
     @Test
     public void shouldReturnBook() throws Exception {
-        doNothing().when(bookDAO).returnBook(ID);
+        doNothing().when(bookService).returnBook(ID);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/books/" + ID + "/return"))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/books/" + ID));
 
-        verify(bookDAO).returnBook(ID);
+        verify(bookService).returnBook(ID);
     }
 
     @Test
     public void shouldTakeBook() throws Exception {
-        doNothing().when(bookDAO).takeBook(USER_ID, ID);
+        doNothing().when(bookService).takeBook(USER_ID, ID);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/books/" + ID + "/take")
                         .param("user_id", String.valueOf(USER_ID)))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/books/" + ID));
 
-        verify(bookDAO).takeBook(USER_ID, ID);
+        verify(bookService).takeBook(USER_ID, ID);
     }
 
 }

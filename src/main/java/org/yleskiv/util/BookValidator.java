@@ -4,15 +4,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.yleskiv.model.Book;
-import org.yleskiv.repository.BookDAO;
+import org.yleskiv.repository.BookRepository;
 
 @Component
 public class BookValidator implements Validator {
 
-    private final BookDAO bookDAO;
+    private final BookRepository bookRepository;
 
-    public BookValidator(BookDAO bookDAO) {
-        this.bookDAO = bookDAO;
+    public BookValidator(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class BookValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Book book = (Book) target;
 
-        if(bookDAO.findByName(book.getName()) != null) {
+        if(bookRepository.findByName(book.getName()).isPresent()) {
             errors.rejectValue("name", "400", "Book with this name already exists!");
         }
     }
